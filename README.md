@@ -28,15 +28,24 @@ It was built as part of **Neighborhood Earth**, a SteamHead initiative that help
 ## How it works
 
 - A single self-contained `index.html` — no build step, no dependencies. Everything (HTML, CSS, and JavaScript) lives in one file.
-- The globe is drawn with the 2D Canvas API (no WebGL/Three.js).
-- Launch data is pulled live from [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) (`ll.thespacedevs.com`). If the live fetch fails or times out, the page falls back to a bundled snapshot of upcoming launches so it's never blank.
-- Launch sites are matched to coordinates and rendered on the globe with live countdowns; selecting a site opens a detail card with mission, vehicle, and provider information.
+- The globe is drawn with the 2D Canvas API (no WebGL/Three.js), traced from real [Natural Earth](https://www.naturalearthdata.com/) coastline geometry.
+- The globe spins once every 200 seconds on its own. Drag or swipe to spin it yourself; it resumes auto-rotation after 5 seconds of no touch.
+- Every major spaceport gets a pin: green means a launch is scheduled, pulsing red means it's inside 24 hours, hollow means nothing's booked there. Tapping a pin or a row in the manifest list opens a detail card and swings the globe around to that site.
+- Countdowns step down in resolution as precision allows: seconds inside a day, then `T− 3d 04h 12m`, then `≈ 27 days`, then `≈ 2 months` for anything vague.
+- The detail card shows mission, vehicle, provider, a one-line purpose, destination orbit, what's aboard, liftoff time converted to *your* device's local time, pad coordinates, a confidence line stating plainly whether the date is a published target, a NET window, or an estimate, and what else is queued at that pad.
+- On load, the page tries [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) (`ll.thespacedevs.com`) and switches the header chip to "Live feed" if it succeeds. That fetch is commonly blocked by CORS inside sandboxed previews, but works when the page is served from its own domain (as it is on steamhead.space and GitHub Pages) — so the live feed should stay current indefinitely there.
+- If the live fetch fails or is unavailable, the page falls back to a bundled snapshot so it's never blank (see limitations below).
 
 ## Known data limitations
 
-- Launch dates and times (`NET` — "no earlier than") change frequently and are sometimes only precise to the month or quarter; the countdown display reflects that precision.
-- The live API has rate limits and occasional downtime, which is why a static snapshot ships as a fallback — that snapshot will drift out of date over time.
+- The bundled fallback snapshot was hand-built from [nextspaceflight.com](https://nextspaceflight.com) and [rocketlaunch.org](https://rocketlaunch.org) on **3 August 2026**, covering 30 spaceports and 29 missions through mid-September 2026, plus labelled estimates for Starship, Neutron, and other quiet pads. It will drift out of date — the live feed (see above) is what keeps the page accurate day to day.
+- Launch dates and times (`NET` — "no earlier than") change frequently and are sometimes only precise to the month or quarter; the countdown display and the card's confidence line reflect that precision rather than hiding it.
+- The live API has its own rate limits and occasional downtime, which is why the static snapshot exists as a backstop.
 - Mission descriptions and orbit data depend entirely on what launch providers publish; some fields will read "TBD" or "not disclosed."
+
+## Roadmap
+
+Each launch already carries a site with latitude/longitude, so flight-path visualization is a natural next step: adding an azimuth per mission and drawing a great-circle arc from the pin fits cleanly into the existing projection code (roughly 30 lines).
 
 ## Use it in a classroom
 
