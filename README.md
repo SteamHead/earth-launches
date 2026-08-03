@@ -5,7 +5,7 @@
 Launches from Earth is an interactive globe that lets people explore upcoming space launches around the world. Visitors can watch live countdowns, locate launch sites, and select individual spaceports to learn more about the missions beginning there.
 
 **Live version:** https://www.steamhead.space/neighborhood-earth/launches-from-earth/
-**GitHub Pages mirror:** https://steamhead.github.io/earth-launches/
+**GitHub Pages mirror:** https://boomtown001.github.io/earth-launches/ *(pending — enable in repo Settings → Pages → Deploy from branch → main → /(root); this repo will move to the SteamHead org, so this URL will change then too)*
 
 ## Guiding question
 
