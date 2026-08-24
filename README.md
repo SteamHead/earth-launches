@@ -38,7 +38,7 @@ It was built as part of **Neighborhood Earth**, a SteamHead initiative that help
 
 ## Known data limitations
 
-- The bundled fallback snapshot was hand-built from [nextspaceflight.com](https://nextspaceflight.com) and [rocketlaunch.org](https://rocketlaunch.org) on **3 August 2026**, covering 30 spaceports and 29 missions through mid-September 2026, plus labelled estimates for Starship, Neutron, and other quiet pads. It will drift out of date — the live feed (see above) is what keeps the page accurate day to day.
+- The bundled fallback snapshot was pulled from [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) on **23 August 2026**, covering 30 spaceports and 35 missions through mid-October 2026. It will drift out of date — the live feed (see above) is what keeps the page accurate day to day.
 - Launch dates and times (`NET` — "no earlier than") change frequently and are sometimes only precise to the month or quarter; the countdown display and the card's confidence line reflect that precision rather than hiding it.
 - The live API has its own rate limits and occasional downtime, which is why the static snapshot exists as a backstop.
 - Mission descriptions and orbit data depend entirely on what launch providers publish; some fields will read "TBD" or "not disclosed."
