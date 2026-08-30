@@ -346,8 +346,8 @@ const SITES = [
 /* precision: 'time' exact T-0 · 'day' a known day · 'month' / 'quarter' a window
    est: true  → the date is our estimate, not a published target            */
 const LAUNCHES = [
-  {site:"ccsfs", net:"2026-08-30T11:25:49Z", p:"time", veh:"Falcon Heavy", who:"SpaceX",
-   mission:"Nancy Grace Roman Space Telescope", orbit:"Sun-Earth L2", status:"Go for Launch",
+  {site:"ccsfs", net:"2026-08-30T11:26:04Z", p:"time", veh:"Falcon Heavy", who:"SpaceX",
+   mission:"Nancy Grace Roman Space Telescope", orbit:"Sun-Earth L2", status:"Launch in Flight",
    brief:"The Nancy Grace Roman Space Telescope is a NASA infrared space telescope with a 2.4 m (7.9 ft) wide field of view primary mirror and two scientific instruments."},
   {site:"lc1", net:"2026-08-31T12:05:00Z", p:"time", veh:"Electron", who:"Rocket Lab",
    mission:"Owl Around The World (StriX Launch 11)", orbit:"Low Earth Orbit", status:"Go for Launch",
@@ -370,15 +370,15 @@ const LAUNCHES = [
   {site:"bai", net:"2026-09-09T16:15:03Z", p:"time", veh:"Soyuz 2.1b", who:"Russian Federal Space Agency (ROSCOSMOS)",
    mission:"Progress MS-35 (96P)", orbit:"Low Earth Orbit", status:"Go for Launch",
    brief:"Progress resupply mission to the International Space Station."},
-  {site:"ccsfs", net:"2026-09-12T22:34:00Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
-   mission:"Crew-13", orbit:"Low Earth Orbit", status:"Go for Launch",
-   brief:"SpaceX Crew-13 is the thirteenth crewed operational flight of a Crew Dragon spacecraft to the International Space Station as part of NASA's Commercial Crew Program."},
   {site:"kou", net:"2026-09-15T01:21:07Z", p:"time", veh:"Vega-C", who:"Avio S.p.A",
    mission:"Sentinel-3C & FLEX", orbit:"Sun-Synchronous Orbit", status:"Go for Launch",
    brief:"Sentinel-3C is the third satellite in the Sentinel-3 constellation, which provides high-accuracy optical, radar and altimetry data for marine and land services."},
   {site:"lc1", net:"2026-09-30T00:00:00Z", p:"month", veh:"Electron", who:"Rocket Lab",
    mission:"LOXSAT 1", orbit:"Low Earth Orbit", status:"To Be Determined",
    brief:"LOXSAT 1 is a demonstration satellite of a complete cryogenic oxygen fluid management system in orbit, developed by Eta Space and sponsored by NASA's Tipping Point program."},
+  {site:"ccsfs", net:"2026-09-30T00:00:00Z", p:"month", veh:"Falcon 9 Block 5", who:"SpaceX",
+   mission:"Crew-13", orbit:"Low Earth Orbit", status:"To Be Determined",
+   brief:"SpaceX Crew-13 is the thirteenth crewed operational flight of a Crew Dragon spacecraft to the International Space Station as part of NASA's Commercial Crew Program."},
   {site:"ccsfs", net:"2026-09-30T00:00:00Z", p:"month", veh:"Falcon 9 Block 5", who:"SpaceX",
    mission:"O3b mPower 11-13", orbit:"Medium Earth Orbit", status:"To Be Determined",
    brief:"3 high-throughput communications satellites in Medium Earth Orbit (MEO) built by Boeing and operated by SES."},
@@ -957,7 +957,7 @@ async function tryLive(){
 function stamp(){
   $('#feed').innerHTML = dataMode==='live'
     ? '<b>Live feed</b> · Launch Library'
-    : '<b>Snapshot</b> · 29 Aug 2026';
+    : '<b>Snapshot</b> · 30 Aug 2026';
 }
 
 /* Manual refresh. The snapshot is rebuilt daily by CI, but launch times move
