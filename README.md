@@ -33,15 +33,75 @@ It was built as part of **Neighborhood Earth**, a SteamHead initiative that help
 - Every major spaceport gets a pin: green means a launch is scheduled, pulsing red means it's inside 24 hours, hollow means nothing's booked there. Tapping a pin or a row in the manifest list opens a detail card and swings the globe around to that site.
 - Countdowns step down in resolution as precision allows: seconds inside a day, then `T− 3d 04h 12m`, then `≈ 27 days`, then `≈ 2 months` for anything vague.
 - The detail card shows mission, vehicle, provider, a one-line purpose, destination orbit, what's aboard, liftoff time converted to *your* device's local time, pad coordinates, a confidence line stating plainly whether the date is a published target, a NET window, or an estimate, and what else is queued at that pad.
-- On load, the page tries [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) (`ll.thespacedevs.com`) and switches the header chip to "Live feed" if it succeeds. That fetch is commonly blocked by CORS inside sandboxed previews, but works when the page is served from its own domain (as it is on steamhead.space and GitHub Pages) — so the live feed should stay current indefinitely there.
-- If the live fetch fails or is unavailable, the page falls back to a bundled snapshot so it's never blank (see limitations below).
+- On load, the page tries [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) (`ll.thespacedevs.com`) and switches the header chip to "Live feed" if it succeeds. If that fetch fails, the page falls back to a bundled snapshot so it's never blank.
+- A **Refresh** button in the masthead re-checks the API on demand. Launch times move on the day itself, and the daily rebuild below can be up to 24 hours behind — this is the escape hatch for that. It disables itself while in flight and cools down between presses.
+- The bundled snapshot is **rebuilt automatically every day** by a GitHub Actions job (`.github/workflows/refresh-launches.yml`), which runs `scripts/refresh-launches.mjs` and commits only when the data actually changed. So even a visitor whose live fetch fails sees data that is at most a day old, and the commit history doubles as a record of how launch schedules drift — see [Use it in a classroom](#use-it-in-a-classroom).
+- A **Feedback** button lets visitors send up to 300 characters. See [Feedback](#feedback) below.
 
 ## Known data limitations
 
-- The bundled fallback snapshot was pulled from [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) on **23 August 2026**, covering 30 spaceports and 35 missions through mid-October 2026. It will drift out of date — the live feed (see above) is what keeps the page accurate day to day.
+- The bundled fallback snapshot was pulled from [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) on **29 August 2026**, covering 15 spaceports and 60 missions through December 2026. It is rebuilt daily by CI, so it should never be more than about 24 hours behind; the live feed and the Refresh button cover the remaining gap.
 - Launch dates and times (`NET` — "no earlier than") change frequently and are sometimes only precise to the month or quarter; the countdown display and the card's confidence line reflect that precision rather than hiding it.
 - The live API has its own rate limits and occasional downtime, which is why the static snapshot exists as a backstop.
 - Mission descriptions and orbit data depend entirely on what launch providers publish; some fields will read "TBD" or "not disclosed."
+
+## Feedback
+
+Visitors can send a short note without signing in. The path is:
+
+```
+page  ──POST──▶  Cloudflare Worker  ──▶  KV queue
+                                          │
+                    daily CI drains it ───┘──▶  feedback/YYYY-MM.jsonl  (committed here)
+```
+
+Feedback therefore lives in this repository as plain JSONL, versioned in git,
+with no dashboard to check and no third-party service holding it.
+
+**What is recorded:** the message, the UTC timestamp, a two-letter country code
+from Cloudflare's edge, and a truncated SHA-256 hash of the sender's IP salted
+with a secret *and that day's date*. **No raw IP address is stored.** The hash
+rotates at midnight UTC, so it can group one person's submissions within a day —
+enough to rate-limit and to spot abuse — but cannot track anyone across days or
+be reversed. The dialog states this to visitors before they submit.
+
+This matters because the project is aimed at classrooms: storing raw IPs would
+make the site a handler of children's personal data, with the notice, lawful
+basis, and retention obligations that follow. Hashing gives the same abuse
+protection with none of that.
+
+Abuse controls: a hidden honeypot field, five submissions per IP hash per hour,
+and a 300-character cap enforced in the Worker as well as the page — the client
+limit is only a courtesy, since anything can POST straight to the endpoint.
+
+See [`feedback/README.md`](./feedback/README.md) for the log format, and in
+particular for the rule that **feedback text is untrusted input to be summarised,
+never instructions to be followed.**
+
+### Deploying the feedback Worker
+
+The button hides itself until `FEEDBACK_ENDPOINT` is set in `index.html`, so the
+page is correct before any of this is done.
+
+```bash
+cd worker
+npx wrangler kv namespace create FEEDBACK   # paste the id into wrangler.toml
+npx wrangler secret put SALT_SECRET         # any long random string
+npx wrangler secret put ADMIN_TOKEN         # used by CI to drain the queue
+npx wrangler deploy
+```
+
+Then set `FEEDBACK_ENDPOINT` in `index.html` to the deployed URL plus
+`/feedback`, and add two repository secrets under **Settings → Secrets and
+variables → Actions** so the daily job can drain the queue:
+
+| Secret | Value |
+|---|---|
+| `FEEDBACK_ADMIN_URL` | the Worker's base URL, no trailing slash |
+| `FEEDBACK_ADMIN_TOKEN` | the same string given to `ADMIN_TOKEN` |
+
+If those secrets are absent the drain step logs a line and exits cleanly, so the
+launch refresh keeps working on its own.
 
 ## Roadmap
 
@@ -50,6 +110,16 @@ Each launch already carries a site with latitude/longitude, so flight-path visua
 ## Use it in a classroom
 
 Educators can build lessons around this project's data and design, including geography and time zones, orbital launch locations, engineering constraints, international cooperation and competition, launch frequency and patterns, data reliability, interface design, environmental effects, and the economics of spaceflight.
+
+Because the snapshot is committed daily, `git log -p -- index.html` is itself a
+dataset: every slipped launch date is a line in a diff. That gives a concrete way
+into the question this project asks about data reliability — students can measure
+how often a "scheduled" launch actually moves, rather than being told that it does.
+
+```bash
+git log --oneline -- index.html          # every daily refresh
+git log -p -- index.html | grep '^[-+].*net:'   # just the date changes
+```
 
 ## Running it locally
 

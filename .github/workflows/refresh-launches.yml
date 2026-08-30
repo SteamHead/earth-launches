@@ -1,0 +1,52 @@
+name: Refresh launch snapshot
+
+on:
+  schedule:
+    # 06:10 UTC daily. Off the hour on purpose — the top of the hour is when
+    # every other cron on GitHub fires, and runners queue behind it.
+    - cron: '10 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-launches
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rebuild snapshot from Launch Library
+        run: node scripts/refresh-launches.mjs
+
+      - name: Drain queued feedback into the repo
+        env:
+          FEEDBACK_ADMIN_URL: ${{ secrets.FEEDBACK_ADMIN_URL }}
+          FEEDBACK_ADMIN_TOKEN: ${{ secrets.FEEDBACK_ADMIN_TOKEN }}
+        run: node scripts/drain-feedback.mjs
+
+      - name: Commit if anything actually moved
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No schedule changes and no new feedback; nothing to commit."
+            exit 0
+          fi
+          # Name the commit for what it contains, so the history stays readable.
+          parts=""
+          git diff --quiet -- index.html || parts="launch snapshot"
+          if [ -n "$(git status --porcelain feedback)" ]; then
+            [ -n "$parts" ] && parts="$parts + feedback" || parts="feedback"
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Daily refresh: $parts ($(date -u '+%d %b %Y'))"
+          git push

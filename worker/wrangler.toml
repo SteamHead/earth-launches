@@ -1,0 +1,14 @@
+name = "earth-launches-feedback"
+main = "feedback-worker.js"
+compatibility_date = "2024-11-01"
+
+# Create the namespace first:
+#   npx wrangler kv namespace create FEEDBACK
+# then paste the returned id below.
+[[kv_namespaces]]
+binding = "FEEDBACK"
+id = "PASTE_KV_NAMESPACE_ID_HERE"
+
+# Secrets are set out of band, never committed:
+#   npx wrangler secret put SALT_SECRET
+#   npx wrangler secret put ADMIN_TOKEN
