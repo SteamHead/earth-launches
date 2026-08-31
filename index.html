@@ -346,15 +346,12 @@ const SITES = [
 /* precision: 'time' exact T-0 · 'day' a known day · 'month' / 'quarter' a window
    est: true  → the date is our estimate, not a published target            */
 const LAUNCHES = [
-  {site:"ccsfs", net:"2026-08-30T11:26:04Z", p:"time", veh:"Falcon Heavy", who:"SpaceX",
-   mission:"Nancy Grace Roman Space Telescope", orbit:"Sun-Earth L2", status:"Launch in Flight",
-   brief:"The Nancy Grace Roman Space Telescope is a NASA infrared space telescope with a 2.4 m (7.9 ft) wide field of view primary mirror and two scientific instruments."},
-  {site:"lc1", net:"2026-08-31T12:05:00Z", p:"time", veh:"Electron", who:"Rocket Lab",
-   mission:"Owl Around The World (StriX Launch 11)", orbit:"Low Earth Orbit", status:"Go for Launch",
-   brief:"Synthetic aperture radar satellite for Japanese Earth imaging company Synspective."},
   {site:"jiu", net:"2026-09-01T02:00:00Z", p:"time", veh:"Pallas-1", who:"Galactic Energy",
    mission:"Demo Flight", orbit:"Unknown", status:"Go for Launch",
    brief:"First test launch of Galactic Energy’s Pallas-1 rocket."},
+  {site:"lc1", net:"2026-09-01T11:38:00Z", p:"time", veh:"Electron", who:"Rocket Lab",
+   mission:"Owl Around The World (StriX Launch 11)", orbit:"Low Earth Orbit", status:"Go for Launch",
+   brief:"Synthetic aperture radar satellite for Japanese Earth imaging company Synspective."},
   {site:"vsfb", net:"2026-09-02T07:46:00Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
    mission:"Starlink Group 15-23", orbit:"Low Earth Orbit", status:"Go for Launch",
    brief:"A batch of 27 satellites for the Starlink mega-constellation - SpaceX's project for space-based Internet communication system."},
@@ -370,6 +367,9 @@ const LAUNCHES = [
   {site:"bai", net:"2026-09-09T16:15:03Z", p:"time", veh:"Soyuz 2.1b", who:"Russian Federal Space Agency (ROSCOSMOS)",
    mission:"Progress MS-35 (96P)", orbit:"Low Earth Orbit", status:"Go for Launch",
    brief:"Progress resupply mission to the International Space Station."},
+  {site:"wen", net:"2026-09-11T16:00:00Z", p:"time", veh:"Long March 8A", who:"China Aerospace Science and Technology Corporation",
+   mission:"Unknown Payload", orbit:"Unknown", status:"To Be Confirmed",
+   brief:"Details TBD."},
   {site:"kou", net:"2026-09-15T01:21:07Z", p:"time", veh:"Vega-C", who:"Avio S.p.A",
    mission:"Sentinel-3C & FLEX", orbit:"Sun-Synchronous Orbit", status:"Go for Launch",
    brief:"Sentinel-3C is the third satellite in the Sentinel-3 constellation, which provides high-accuracy optical, radar and altimetry data for marine and land services."},
@@ -433,6 +433,9 @@ const LAUNCHES = [
   {site:"bai", net:"2026-11-24T05:03:00Z", p:"time", veh:"Soyuz 2.1b", who:"Russian Federal Space Agency (ROSCOSMOS)",
    mission:"Progress MS-36 (97P)", orbit:"Low Earth Orbit", status:"To Be Confirmed",
    brief:"Progress resupply mission to the International Space Station."},
+  {site:"kou", net:"2026-11-30T00:00:00Z", p:"month", veh:"Ariane 62", who:"Arianespace",
+   mission:"Metop-SG B1", orbit:"Sun-Synchronous Orbit", status:"To Be Determined",
+   brief:"Second of EUMETSAT's second generation of Metop weather satellites."},
   {site:"ccsfs", net:"2026-11-30T00:00:00Z", p:"month", veh:"Falcon Heavy", who:"SpaceX",
    mission:"Griffin Mission One", orbit:"Lunar Orbit", status:"To Be Determined",
    brief:"Demonstration flight of the Astrobotic Griffin lander and its engines, initially contracted for the cancelled NASA VIPER (Volatiles Investigating Polar Exploration Rover) mission."},
@@ -508,9 +511,6 @@ const LAUNCHES = [
   {site:"ple", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Angara 1.2", who:"Russian Space Forces",
    mission:"Kosmos (Unknown Payload)", orbit:"Unknown", status:"To Be Determined",
    brief:"Unknown classified satellite(s) for the Russian military."},
-  {site:"kou", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Ariane 62", who:"Arianespace",
-   mission:"Metop-SG B1", orbit:"Sun-Synchronous Orbit", status:"To Be Determined",
-   brief:"Second of EUMETSAT's second generation of Metop weather satellites."},
   {site:"kou", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Ariane 64", who:"Arianespace",
    mission:"Ariane 64 | GO-1", orbit:"Not disclosed", status:"To Be Determined",
    brief:"No mission description has been published."},
@@ -957,7 +957,7 @@ async function tryLive(){
 function stamp(){
   $('#feed').innerHTML = dataMode==='live'
     ? '<b>Live feed</b> · Launch Library'
-    : '<b>Snapshot</b> · 30 Aug 2026';
+    : '<b>Snapshot</b> · 31 Aug 2026';
 }
 
 /* Manual refresh. The snapshot is rebuilt daily by CI, but launch times move
