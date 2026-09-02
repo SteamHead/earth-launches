@@ -346,14 +346,11 @@ const SITES = [
 /* precision: 'time' exact T-0 · 'day' a known day · 'month' / 'quarter' a window
    est: true  → the date is our estimate, not a published target            */
 const LAUNCHES = [
-  {site:"jiu", net:"2026-09-01T02:00:00Z", p:"time", veh:"Pallas-1", who:"Galactic Energy",
-   mission:"Demo Flight", orbit:"Sun-Synchronous Orbit", status:"Launch Successful",
-   brief:"First test launch of Galactic Energy’s Pallas-1 rocket, with a dummy payload on board."},
-  {site:"vsfb", net:"2026-09-02T07:46:00Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
-   mission:"Starlink Group 15-23", orbit:"Low Earth Orbit", status:"Go for Launch",
+  {site:"vsfb", net:"2026-09-02T08:42:12Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
+   mission:"Starlink Group 15-23", orbit:"Low Earth Orbit", status:"Launch Successful",
    brief:"A batch of 27 satellites for the Starlink mega-constellation - SpaceX's project for space-based Internet communication system."},
-  {site:"lc1", net:"2026-09-02T11:00:00Z", p:"time", veh:"Electron", who:"Rocket Lab",
-   mission:"Owl Around The World (StriX Launch 11)", orbit:"Low Earth Orbit", status:"Go for Launch",
+  {site:"lc1", net:"2026-09-02T11:12:00Z", p:"time", veh:"Electron", who:"Rocket Lab",
+   mission:"Owl Around The World (StriX Launch 11)", orbit:"Low Earth Orbit", status:"On Hold",
    brief:"Synthetic aperture radar satellite for Japanese Earth imaging company Synspective."},
   {site:"sdsc", net:"2026-09-03T21:25:00Z", p:"time", veh:"GSLV Mk. II", who:"Indian Space Research Organization",
    mission:"GISAT-1A (EOS-05)", orbit:"Geostationary Transfer Orbit", status:"Go for Launch",
@@ -367,6 +364,9 @@ const LAUNCHES = [
   {site:"bai", net:"2026-09-09T16:15:03Z", p:"time", veh:"Soyuz 2.1b", who:"Russian Federal Space Agency (ROSCOSMOS)",
    mission:"Progress MS-35 (96P)", orbit:"Low Earth Orbit", status:"Go for Launch",
    brief:"Progress resupply mission to the International Space Station."},
+  {site:"vsfb", net:"2026-09-10T15:37:00Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
+   mission:"USSF-xxx (\"R-2\")", orbit:"Low Earth Orbit", status:"To Be Confirmed",
+   brief:"Note: Actual USSF launch mission number to be confirmed."},
   {site:"wen", net:"2026-09-11T16:00:00Z", p:"time", veh:"Long March 8A", who:"China Aerospace Science and Technology Corporation",
    mission:"Unknown Payload", orbit:"Unknown", status:"To Be Confirmed",
    brief:"Details TBD."},
@@ -957,7 +957,7 @@ async function tryLive(){
 function stamp(){
   $('#feed').innerHTML = dataMode==='live'
     ? '<b>Live feed</b> · Launch Library'
-    : '<b>Snapshot</b> · 1 Sep 2026';
+    : '<b>Snapshot</b> · 2 Sep 2026';
 }
 
 /* Manual refresh. The snapshot is rebuilt daily by CI, but launch times move

@@ -40,7 +40,7 @@ It was built as part of **Neighborhood Earth**, a SteamHead initiative that help
 
 ## Known data limitations
 
-- The bundled fallback snapshot was pulled from [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) on **1 September 2026**, covering 16 spaceports and 60 missions through December 2026. It is rebuilt daily by CI, so it should never be more than about 24 hours behind; the live feed and the Refresh button cover the remaining gap.
+- The bundled fallback snapshot was pulled from [The Space Devs' Launch Library API](https://thespacedevs.com/llapi) on **2 September 2026**, covering 16 spaceports and 60 missions through December 2026. It is rebuilt daily by CI, so it should never be more than about 24 hours behind; the live feed and the Refresh button cover the remaining gap.
 - Launch dates and times (`NET` — "no earlier than") change frequently and are sometimes only precise to the month or quarter; the countdown display and the card's confidence line reflect that precision rather than hiding it.
 - The live API has its own rate limits and occasional downtime, which is why the static snapshot exists as a backstop.
 - Mission descriptions and orbit data depend entirely on what launch providers publish; some fields will read "TBD" or "not disclosed."
