@@ -346,11 +346,8 @@ const SITES = [
 /* precision: 'time' exact T-0 · 'day' a known day · 'month' / 'quarter' a window
    est: true  → the date is our estimate, not a published target            */
 const LAUNCHES = [
-  {site:"lc1", net:"2026-09-02T12:01:00Z", p:"time", veh:"Electron", who:"Rocket Lab",
-   mission:"Owl Around The World (StriX Launch 11)", orbit:"Low Earth Orbit", status:"Launch Successful",
-   brief:"Synthetic aperture radar satellite for Japanese Earth imaging company Synspective."},
   {site:"sdsc", net:"2026-09-03T21:25:00Z", p:"time", veh:"GSLV Mk. II", who:"Indian Space Research Organization",
-   mission:"GISAT-1A (EOS-05)", orbit:"Geostationary Transfer Orbit", status:"Go for Launch",
+   mission:"GISAT-1A (EOS-05)", orbit:"Geostationary Transfer Orbit", status:"Launch Successful",
    brief:"GISAT-1A (GEO Imaging Satellite) is an Indian earth observing satellite operating from geostationary orbit to facilitate continuous observation of Indian sub-continent, quick monitoring of natural hazards and disaster."},
   {site:"and", net:"2026-09-04T20:00:00Z", p:"time", veh:"Spectrum", who:"Isar Aerospace",
    mission:"Onward and Upward", orbit:"Sun-Synchronous Orbit", status:"To Be Confirmed",
@@ -525,6 +522,9 @@ const LAUNCHES = [
    brief:"BlackSky Gen-3 Earth-imaging satellites"},
   {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
    mission:"BlackSky Gen-3 8", orbit:"Low Earth Orbit", status:"To Be Determined",
+   brief:"BlackSky Gen-3 Earth-imaging satellites"},
+  {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
+   mission:"BlackSky Gen-3 9", orbit:"Low Earth Orbit", status:"To Be Determined",
    brief:"BlackSky Gen-3 Earth-imaging satellites"},
 ];
 
@@ -957,7 +957,7 @@ async function tryLive(){
 function stamp(){
   $('#feed').innerHTML = dataMode==='live'
     ? '<b>Live feed</b> · Launch Library'
-    : '<b>Snapshot</b> · 3 Sep 2026';
+    : '<b>Snapshot</b> · 4 Sep 2026';
 }
 
 /* Manual refresh. The snapshot is rebuilt daily by CI, but launch times move
