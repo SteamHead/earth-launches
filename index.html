@@ -346,15 +346,12 @@ const SITES = [
 /* precision: 'time' exact T-0 · 'day' a known day · 'month' / 'quarter' a window
    est: true  → the date is our estimate, not a published target            */
 const LAUNCHES = [
-  {site:"vsfb", net:"2026-09-06T14:26:54Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
-   mission:"Starlink Group 15-24", orbit:"Low Earth Orbit", status:"Launch Successful",
-   brief:"A batch of 27 satellites for the Starlink mega-constellation - SpaceX's project for space-based Internet communication system."},
-  {site:"jiu", net:"2026-09-09T09:00:00Z", p:"time", veh:"Long March 2D/YZ-3", who:"China Aerospace Science and Technology Corporation",
-   mission:"Unknown Payload", orbit:"Unknown", status:"Go for Launch",
-   brief:"Details TBD."},
   {site:"bai", net:"2026-09-09T16:15:03Z", p:"time", veh:"Soyuz 2.1b", who:"Russian Federal Space Agency (ROSCOSMOS)",
    mission:"Progress MS-35 (96P)", orbit:"Low Earth Orbit", status:"Go for Launch",
    brief:"Progress resupply mission to the International Space Station."},
+  {site:"jiu", net:"2026-09-10T09:00:00Z", p:"time", veh:"Long March 2D/YZ-3", who:"China Aerospace Science and Technology Corporation",
+   mission:"Unknown Payload", orbit:"Unknown", status:"Go for Launch",
+   brief:"Details TBD."},
   {site:"vsfb", net:"2026-09-10T15:37:00Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
    mission:"USSF-153", orbit:"Low Earth Orbit", status:"Go for Launch",
    brief:"USSF-153 is a classified mission for the United States Space Force."},
@@ -525,6 +522,9 @@ const LAUNCHES = [
    brief:"Synthetic aperture radar Earth observation satellite for Japanese Earth imaging company iQPS."},
   {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
    mission:"iQPS Launch 11", orbit:"Low Earth Orbit", status:"To Be Determined",
+   brief:"Synthetic aperture radar Earth observation satellite for Japanese Earth imaging company iQPS."},
+  {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
+   mission:"iQPS Launch 9", orbit:"Low Earth Orbit", status:"To Be Determined",
    brief:"Synthetic aperture radar Earth observation satellite for Japanese Earth imaging company iQPS."},
 ];
 
@@ -957,7 +957,7 @@ async function tryLive(){
 function stamp(){
   $('#feed').innerHTML = dataMode==='live'
     ? '<b>Live feed</b> · Launch Library'
-    : '<b>Snapshot</b> · 7 Sep 2026';
+    : '<b>Snapshot</b> · 8 Sep 2026';
 }
 
 /* Manual refresh. The snapshot is rebuilt daily by CI, but launch times move
