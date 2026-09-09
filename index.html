@@ -346,9 +346,6 @@ const SITES = [
 /* precision: 'time' exact T-0 · 'day' a known day · 'month' / 'quarter' a window
    est: true  → the date is our estimate, not a published target            */
 const LAUNCHES = [
-  {site:"bai", net:"2026-09-09T16:15:03Z", p:"time", veh:"Soyuz 2.1b", who:"Russian Federal Space Agency (ROSCOSMOS)",
-   mission:"Progress MS-35 (96P)", orbit:"Low Earth Orbit", status:"Go for Launch",
-   brief:"Progress resupply mission to the International Space Station."},
   {site:"jiu", net:"2026-09-10T09:00:00Z", p:"time", veh:"Long March 2D/YZ-3", who:"China Aerospace Science and Technology Corporation",
    mission:"Unknown Payload", orbit:"Unknown", status:"Go for Launch",
    brief:"Details TBD."},
@@ -361,9 +358,21 @@ const LAUNCHES = [
   {site:"ccsfs", net:"2026-09-13T18:50:00Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
    mission:"O3b mPower 11-13", orbit:"Medium Earth Orbit", status:"To Be Confirmed",
    brief:"3 high-throughput communications satellites in Medium Earth Orbit (MEO) built by Boeing and operated by SES."},
+  {site:"star", net:"2026-09-15T00:00:00Z", p:"day", veh:"Starship V3", who:"SpaceX",
+   mission:"Flight 14", orbit:"Low Earth Orbit", status:"To Be Determined",
+   brief:"14th test flight of the two-stage Starship launch vehicle."},
   {site:"kou", net:"2026-09-15T01:21:07Z", p:"time", veh:"Vega-C", who:"Avio S.p.A",
    mission:"Sentinel-3C & FLEX", orbit:"Sun-Synchronous Orbit", status:"Go for Launch",
    brief:"Sentinel-3C is the third satellite in the Sentinel-3 constellation, which provides high-accuracy optical, radar and altimetry data for marine and land services."},
+  {site:"bai", net:"2026-09-16T00:00:00Z", p:"day", veh:"Soyuz 2.1b", who:"Russian Federal Space Agency (ROSCOSMOS)",
+   mission:"Progress MS-35 (96P)", orbit:"Low Earth Orbit", status:"To Be Determined",
+   brief:"Progress resupply mission to the International Space Station."},
+  {site:"wen", net:"2026-09-17T00:00:00Z", p:"time", veh:"Long March 12", who:"China Aerospace Science and Technology Corporation",
+   mission:"Unknown Payload", orbit:"Unknown", status:"To Be Confirmed",
+   brief:"Details TBD."},
+  {site:"vsfb", net:"2026-09-20T01:47:00Z", p:"time", veh:"Falcon 9 Block 5", who:"SpaceX",
+   mission:"Starlink Group 15-27", orbit:"Low Earth Orbit", status:"Go for Launch",
+   brief:"A batch of 27 satellites for the Starlink mega-constellation - SpaceX's project for space-based Internet communication system."},
   {site:"lc1", net:"2026-09-30T00:00:00Z", p:"month", veh:"Electron", who:"Rocket Lab",
    mission:"LOXSAT 1", orbit:"Low Earth Orbit", status:"To Be Determined",
    brief:"LOXSAT 1 is a demonstration satellite of a complete cryogenic oxygen fluid management system in orbit, developed by Eta Space and sponsored by NASA's Tipping Point program."},
@@ -376,9 +385,6 @@ const LAUNCHES = [
   {site:"jiu", net:"2026-09-30T00:00:00Z", p:"month", veh:"Long March 12A", who:"China Aerospace Science and Technology Corporation",
    mission:"Flight 2", orbit:"Low Earth Orbit", status:"To Be Determined",
    brief:"Second test launch of CASC/SAST’s Long March 12A rocket."},
-  {site:"star", net:"2026-09-30T00:00:00Z", p:"month", veh:"Starship V3", who:"SpaceX",
-   mission:"Flight 14", orbit:"Unknown", status:"To Be Determined",
-   brief:"14th test flight of the two-stage Starship launch vehicle."},
   {site:"ccsfs", net:"2026-09-30T00:00:00Z", p:"month", veh:"Vulcan VC6L", who:"United Launch Alliance",
    mission:"Amazon Leo (LV-01)", orbit:"Low Earth Orbit", status:"To Be Determined",
    brief:"Amazon Leo, formerly known as Project Kuiper, is a mega constellation of satellites in Low Earth Orbit that will offer broadband internet access, this constellation will be managed by Kuiper Systems LLC, a subsidiary of Amazon."},
@@ -415,6 +421,9 @@ const LAUNCHES = [
   {site:"vsfb", net:"2026-10-31T00:00:00Z", p:"month", veh:"Falcon 9 Block 5", who:"SpaceX",
    mission:"Transporter 18 (Dedicated SSO Rideshare)", orbit:"Sun-Synchronous Orbit", status:"To Be Determined",
    brief:"Dedicated rideshare flight to a sun-synchronous orbit with dozens of small microsatellites and nanosatellites for commercial and government customers."},
+  {site:"ccsfs", net:"2026-10-31T00:00:00Z", p:"quarter", veh:"Falcon Heavy", who:"SpaceX",
+   mission:"NROL-97", orbit:"Unknown", status:"To Be Determined",
+   brief:"Classified payload for the US National Reconnaissance Office"},
   {site:"vos", net:"2026-11-19T00:00:00Z", p:"day", veh:"Soyuz 2.1a Fregat-M", who:"Russian Federal Space Agency (ROSCOSMOS)",
    mission:"MKA Kinosputnik, KOEN and others", orbit:"Sun-Synchronous Orbit", status:"To Be Determined",
    brief:"Share-ride of multiple satellites, including dual-use optical Earth observation satellites and drone-guiding satellites:\r\n\r\n* MKA Kinosputnik\r\n* KOEN, KA MT-LAB\r\n* NPO Kaisant 6U cubesat with a Germes modem\r\n* NPO Kaisant 16U cubesat with Gonets modems"},
@@ -517,15 +526,6 @@ const LAUNCHES = [
   {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
    mission:"BlackSky Gen-3 9", orbit:"Low Earth Orbit", status:"To Be Determined",
    brief:"BlackSky Gen-3 Earth-imaging satellites"},
-  {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
-   mission:"iQPS Launch 10", orbit:"Low Earth Orbit", status:"To Be Determined",
-   brief:"Synthetic aperture radar Earth observation satellite for Japanese Earth imaging company iQPS."},
-  {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
-   mission:"iQPS Launch 11", orbit:"Low Earth Orbit", status:"To Be Determined",
-   brief:"Synthetic aperture radar Earth observation satellite for Japanese Earth imaging company iQPS."},
-  {site:"lc1", net:"2026-12-31T00:00:00Z", p:"quarter", veh:"Electron", who:"Rocket Lab",
-   mission:"iQPS Launch 9", orbit:"Low Earth Orbit", status:"To Be Determined",
-   brief:"Synthetic aperture radar Earth observation satellite for Japanese Earth imaging company iQPS."},
 ];
 
 /* ---------------- helpers ---------------- */
@@ -957,7 +957,7 @@ async function tryLive(){
 function stamp(){
   $('#feed').innerHTML = dataMode==='live'
     ? '<b>Live feed</b> · Launch Library'
-    : '<b>Snapshot</b> · 8 Sep 2026';
+    : '<b>Snapshot</b> · 9 Sep 2026';
 }
 
 /* Manual refresh. The snapshot is rebuilt daily by CI, but launch times move
