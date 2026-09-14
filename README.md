@@ -65,7 +65,10 @@ keying off "did we just commit", so it repairs drift from any cause.
 **That step needs a `SITE_SYNC_TOKEN` secret on this repo** — a fine-grained PAT
 with **Contents: Read and write** on `steamhead-site-rebuild`. Without it the
 step logs a notice and skips; the snapshot here still updates, only the public
-site lags. To sync by hand in the meantime:
+site lags, and **CI stays green either way** — a passing run does not mean the
+site is current. Tracked in
+[#2](https://github.com/SteamHead/earth-launches/issues/2). To sync by hand in
+the meantime:
 
 ```bash
 cp index.html ../steamhead-site-rebuild/public/projects/launches-from-earth/index.html
