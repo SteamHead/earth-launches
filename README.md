@@ -5,7 +5,7 @@
 Launches from Earth is an interactive globe that lets people explore upcoming space launches around the world. Visitors can watch live countdowns, locate launch sites, and select individual spaceports to learn more about the missions beginning there.
 
 **Live version:** https://www.steamhead.space/neighborhood-earth/launches-from-earth/
-**GitHub Pages mirror:** https://boomtown001.github.io/earth-launches/ *(pending — enable in repo Settings → Pages → Deploy from branch → main → /(root); this repo will move to the SteamHead org, so this URL will change then too)*
+**GitHub Pages mirror:** https://steamhead.github.io/earth-launches/ *(not yet enabled — turn it on in repo Settings → Pages → Deploy from branch → main → /(root). The move to the SteamHead org has happened, so this is the final URL.)*
 
 ## Guiding question
 
@@ -37,6 +37,40 @@ It was built as part of **Neighborhood Earth**, a SteamHead initiative that help
 - A **Refresh** button in the masthead re-checks the API on demand. Launch times move on the day itself, and the daily rebuild below can be up to 24 hours behind — this is the escape hatch for that. It disables itself while in flight and cools down between presses.
 - The bundled snapshot is **rebuilt automatically every day** by a GitHub Actions job (`.github/workflows/refresh-launches.yml`), which runs `scripts/refresh-launches.mjs` and commits only when the data actually changed. So even a visitor whose live fetch fails sees data that is at most a day old, and the commit history doubles as a record of how launch schedules drift — see [Use it in a classroom](#use-it-in-a-classroom).
 - A **Feedback** button lets visitors send up to 300 characters. See [Feedback](#feedback) below.
+
+## Downstream copy on the public site
+
+**If you edit `index.html`, it does not reach the public site on its own.**
+
+The live page at steamhead.space does not iframe this repo. The site repo
+([`SteamHead/steamhead-site-rebuild`](https://github.com/SteamHead/steamhead-site-rebuild))
+keeps its own **vendored copy**:
+
+```
+public/projects/launches-from-earth/index.html   ← iframed by
+src/pages/neighborhood-earth/launches-from-earth.astro
+```
+
+That copy is what visitors actually load. It once sat three weeks behind this
+repo and kept serving a broken live feed long after it was fixed here — the
+page called the API with `mode=list`, which returns HTTP 200 but carries no pad
+coordinates, so every launch was silently discarded and the page fell back to a
+stale bundled snapshot with no Refresh button. See site issue
+[#34](https://github.com/SteamHead/steamhead-site-rebuild/issues/34).
+
+The daily workflow now pushes `index.html` into the site repo whenever the two
+differ, which also triggers a site deploy. It compares the files rather than
+keying off "did we just commit", so it repairs drift from any cause.
+
+**That step needs a `SITE_SYNC_TOKEN` secret on this repo** — a fine-grained PAT
+with **Contents: Read and write** on `steamhead-site-rebuild`. Without it the
+step logs a notice and skips; the snapshot here still updates, only the public
+site lags. To sync by hand in the meantime:
+
+```bash
+cp index.html ../steamhead-site-rebuild/public/projects/launches-from-earth/index.html
+# then commit and push that repo — pushing to main auto-deploys the site
+```
 
 ## Known data limitations
 

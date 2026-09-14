@@ -50,3 +50,41 @@ jobs:
           git add -A
           git commit -m "Daily refresh: $parts ($(date -u '+%d %b %Y'))"
           git push
+
+      # The public site (SteamHead/steamhead-site-rebuild) does not iframe this
+      # repo — it serves a vendored copy at
+      # public/projects/launches-from-earth/index.html. Nothing used to sync
+      # that copy, so it sat three weeks behind and kept serving the broken
+      # mode=list feed long after it was fixed here. See site issue #34.
+      #
+      # This compares the two files rather than keying off "did we just commit",
+      # so it also repairs drift introduced any other way.
+      - name: Sync the embed copy into the site repo
+        env:
+          SITE_SYNC_TOKEN: ${{ secrets.SITE_SYNC_TOKEN }}
+        run: |
+          if [ -z "$SITE_SYNC_TOKEN" ]; then
+            echo "SITE_SYNC_TOKEN is not set — skipping the site sync."
+            echo "The snapshot here is still current; only the public site will lag."
+            echo "See README → 'Downstream copy on the public site' to create it."
+            exit 0
+          fi
+
+          embed=public/projects/launches-from-earth/index.html
+          git clone --depth 1 \
+            "https://x-access-token:${SITE_SYNC_TOKEN}@github.com/SteamHead/steamhead-site-rebuild.git" \
+            /tmp/site
+
+          if cmp -s index.html "/tmp/site/$embed"; then
+            echo "Site copy already matches; nothing to push."
+            exit 0
+          fi
+
+          cp index.html "/tmp/site/$embed"
+          cd /tmp/site
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$embed"
+          git commit -m "Sync Launches from Earth embed from earth-launches ($(date -u '+%d %b %Y'))"
+          git push
+          echo "Pushed a fresh embed to the site repo; that triggers a site deploy."
