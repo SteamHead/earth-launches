@@ -62,13 +62,38 @@ The daily workflow now pushes `index.html` into the site repo whenever the two
 differ, which also triggers a site deploy. It compares the files rather than
 keying off "did we just commit", so it repairs drift from any cause.
 
-**That step needs a `SITE_SYNC_TOKEN` secret on this repo** — a fine-grained PAT
-with **Contents: Read and write** on `steamhead-site-rebuild`. Without it the
-step logs a notice and skips; the snapshot here still updates, only the public
-site lags, and **CI stays green either way** — a passing run does not mean the
-site is current. Tracked in
-[#2](https://github.com/SteamHead/earth-launches/issues/2). To sync by hand in
-the meantime:
+Note what this carries: not just the daily snapshot but **the whole file, app
+code included**. That is the point. The three-week outage happened because a
+*code* fix could not reach the site — the snapshot was never the hard part.
+
+### How it authenticates
+
+A **deploy key** scoped to `steamhead-site-rebuild` alone:
+
+- the **public** half is registered on that repo as a write deploy key,
+  titled *earth-launches embed sync (write)*
+  (fingerprint `SHA256:Coi1oH1j+VoFYNvaOJRjqLwrzwzlEDYc4FfqQFj5hy4`);
+- the **private** half is the `SITE_SYNC_KEY` secret on this repo.
+
+Deliberately not a personal access token: a deploy key does not expire, is not
+bound to anyone's account, and cannot reach any repo but that one. The workflow
+pins the host key and uses `IdentitiesOnly=yes`, so it will not fall back to
+some other credential the runner happens to have.
+
+If the key is ever lost or needs rotating, generate a new pair, replace the
+deploy key on the site repo, and reset the secret:
+
+```bash
+ssh-keygen -t ed25519 -N "" -C "earth-launches daily embed sync" -f /tmp/site_sync
+gh repo deploy-key add /tmp/site_sync.pub -R SteamHead/steamhead-site-rebuild \
+  --title "earth-launches embed sync (write)" --allow-write
+gh secret set SITE_SYNC_KEY -R SteamHead/earth-launches < /tmp/site_sync
+shred -u /tmp/site_sync /tmp/site_sync.pub
+```
+
+Without the secret the step logs a notice and skips, and **CI stays green
+either way** — a passing run would not mean the site is current. To sync by
+hand if that ever happens:
 
 ```bash
 cp index.html ../steamhead-site-rebuild/public/projects/launches-from-earth/index.html

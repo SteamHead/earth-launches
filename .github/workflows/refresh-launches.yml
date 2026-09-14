@@ -61,19 +61,26 @@ jobs:
       # so it also repairs drift introduced any other way.
       - name: Sync the embed copy into the site repo
         env:
-          SITE_SYNC_TOKEN: ${{ secrets.SITE_SYNC_TOKEN }}
+          SITE_SYNC_KEY: ${{ secrets.SITE_SYNC_KEY }}
         run: |
-          if [ -z "$SITE_SYNC_TOKEN" ]; then
-            echo "SITE_SYNC_TOKEN is not set — skipping the site sync."
+          if [ -z "$SITE_SYNC_KEY" ]; then
+            echo "SITE_SYNC_KEY is not set — skipping the site sync."
             echo "The snapshot here is still current; only the public site will lag."
             echo "See README → 'Downstream copy on the public site' to create it."
             exit 0
           fi
 
+          # A deploy key scoped to steamhead-site-rebuild alone. IdentitiesOnly
+          # stops ssh offering any other key the runner might pick up, and the
+          # host key is pinned rather than trusted on first use.
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SITE_SYNC_KEY" > ~/.ssh/site_sync
+          chmod 600 ~/.ssh/site_sync
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/site_sync -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+
           embed=public/projects/launches-from-earth/index.html
-          git clone --depth 1 \
-            "https://x-access-token:${SITE_SYNC_TOKEN}@github.com/SteamHead/steamhead-site-rebuild.git" \
-            /tmp/site
+          git clone --depth 1 git@github.com:SteamHead/steamhead-site-rebuild.git /tmp/site
 
           if cmp -s index.html "/tmp/site/$embed"; then
             echo "Site copy already matches; nothing to push."
