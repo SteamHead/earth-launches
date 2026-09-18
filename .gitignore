@@ -2,3 +2,11 @@
 *.log
 .idea/
 .vscode/
+
+# Credentials. The feedback Worker is deployed with a Cloudflare API token and
+# carries two Wrangler secrets; none of them may ever land in this repo, which
+# is public.
+.env
+.env.*
+.dev.vars
+.wrangler/
