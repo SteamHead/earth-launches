@@ -341,15 +341,6 @@ const SITES = [
   {id:'sem',   name:'Imam Khomeini Spaceport',   place:'Semnan, Iran',            lat:35.234, lon:53.921},
   {id:'soh',   name:'Sohae Launching Station',   place:'North Korea',             lat:39.66,  lon:124.705},
   {id:'pal',   name:'Palmachim Airbase',         place:'Israel',                  lat:31.884, lon:34.681}
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
-  {id:'x1', name:"Haiyang Oriental Spaceport", place:"[object Object]", lat:31.2, lon:123.7},
 ];
 
 /* precision: 'time' exact T-0 · 'day' a known day · 'month' / 'quarter' a window
@@ -945,7 +936,12 @@ async function tryLive(){
       if(isNaN(lat)||isNaN(lon)) continue;
       let site=Object.values(sitesById).find(s=>Math.hypot(s.lat-lat,s.lon-lon)<1.2);
       if(!site){
-        site={id:'x'+mapped.length,name:(loc.name||'Unlisted site').split(',')[0],place:loc.country||loc.name||'',lat,lon,launches:[]};
+        // Step past ids the snapshot already uses, or this overwrites one.
+        let n=1; while(sitesById['x'+n]) n++;
+        // location.country is an object in API 2.3.0; using it raw renders
+        // as the literal "[object Object]" in the detail card.
+        const country=typeof loc.country==='string'?loc.country:loc.country&&loc.country.name;
+        site={id:'x'+n,name:(loc.name||'Unlisted site').split(',')[0],place:country||loc.name||'',lat,lon,launches:[]};
         sitesById[site.id]=site;
       }
       const prec=(it.net_precision&&it.net_precision.name||'').toLowerCase();

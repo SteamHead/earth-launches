@@ -5,6 +5,9 @@
    are the same shape; anything that changes here changes there too. */
 
 import { readFileSync, writeFileSync } from 'node:fs';
+import vm from 'node:vm';
+
+const unq = s => s.replace(/\\(.)/g, '$1');
 
 const API = 'https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=60&mode=normal';
 const HTML = new URL('../index.html', import.meta.url).pathname;
@@ -40,9 +43,13 @@ function readSites(html) {
   if (start < 0 || end < 0) throw new Error('could not locate SITES array');
   const body = html.slice(start + 'const SITES = ['.length, end);
   const sites = [];
+  /* Curated entries are hand-written with single quotes, generated ones come
+     out of renderNewSites double-quoted. Match either: a mismatch here leaves
+     this function blind to its own output, and every site it has ever added
+     gets added again on the next run. */
   for (const line of body.split('\n')) {
-    const m = line.match(/id:'([^']+)'.*?name:'([^']*)'.*?place:'([^']*)'.*?lat:\s*(-?[\d.]+),\s*lon:\s*(-?[\d.]+)/);
-    if (m) sites.push({ id: m[1], name: m[2], place: m[3], lat: +m[4], lon: +m[5], raw: line });
+    const m = line.match(/id:\s*(['"])((?:\\.|(?!\1).)*)\1.*?name:\s*(['"])((?:\\.|(?!\3).)*)\3.*?place:\s*(['"])((?:\\.|(?!\5).)*)\5.*?lat:\s*(-?[\d.]+),\s*lon:\s*(-?[\d.]+)/);
+    if (m) sites.push({ id: unq(m[2]), name: unq(m[4]), place: unq(m[6]), lat: +m[7], lon: +m[8], raw: line });
   }
   if (!sites.length) throw new Error('parsed zero sites');
   return { sites, start, end };
@@ -52,6 +59,15 @@ function readSites(html) {
 function mapLaunches(results, sites) {
   const added = [];
   const out = [];
+  /* Count past every x-id already in the file, not just this run's tally —
+     otherwise a second new site in a later run is called 'x1' all over again. */
+  const used = new Set(sites.map(s => s.id));
+  const nextId = () => {
+    let n = 1;
+    while (used.has('x' + n)) n++;
+    used.add('x' + n);
+    return 'x' + n;
+  };
   for (const it of results) {
     const pad = it.pad || {}, loc = pad.location || {};
     const lat = parseFloat(pad.latitude ?? loc.latitude);
@@ -62,9 +78,11 @@ function mapLaunches(results, sites) {
     if (!site) {
       const base = (loc.name || 'Unlisted site').split(',')[0];
       site = {
-        id: 'x' + (added.length + 1),
+        id: nextId(),
         name: base,
-        place: loc.country || loc.name || '',
+        // location.country is an object in API 2.3.0 (it was a bare string
+        // before); String() on the object gives the literal "[object Object]".
+        place: (typeof loc.country === 'string' ? loc.country : loc.country && loc.country.name) || loc.name || '',
         lat: +lat.toFixed(3), lon: +lon.toFixed(3),
       };
       added.push(site);
@@ -109,6 +127,22 @@ function renderNewSites(added) {
   ).join('\n');
 }
 
+/* ---------- never write a page that will not parse ----------
+   Everything the page does lives in one inline <script>, so a single bad
+   character means no globe, no countdowns, nothing — and the daily job would
+   commit it and sync it to the live site with CI still green. */
+function assertScriptParses(html) {
+  const open = html.indexOf('<script>');
+  const close = html.indexOf('</script>', open);
+  if (open < 0 || close < 0) throw new Error('could not locate the inline script block');
+  const src = html.slice(html.indexOf('\n', open) + 1, close);
+  try {
+    new vm.Script(src, { filename: 'index.html inline script' });
+  } catch (e) {
+    throw new Error(`refusing to write index.html: the generated page has a JavaScript syntax error (${e.message})`);
+  }
+}
+
 /* ---------- main ---------- */
 const results = await fetchLaunches();
 let html = readFileSync(HTML, 'utf8');
@@ -129,7 +163,12 @@ html = html.slice(0, lStart) + 'const LAUNCHES = [\n' + renderLaunches(launches)
 // Append any newly discovered sites, leaving curated entries untouched.
 if (added.length) {
   const { end: sEnd } = readSites(html);
-  html = html.slice(0, sEnd) + '\n' + renderNewSites(added) + html.slice(sEnd);
+  // The last curated entry has no trailing comma — it used to end the array.
+  // Appending after it without adding one is a syntax error, and because the
+  // page is a single inline <script> that takes the entire app down with it.
+  const head = html.slice(0, sEnd);
+  const sep = /,\s*$/.test(head) ? '' : ',';
+  html = head + sep + '\n' + renderNewSites(added) + html.slice(sEnd);
   console.log(`added ${added.length} new site(s): ${added.map(s => s.name).join(', ')}`);
 }
 
@@ -138,6 +177,8 @@ const now = new Date();
 const short = `${now.getUTCDate()} ${MONTHS[now.getUTCMonth()].slice(0, 3)} ${now.getUTCFullYear()}`;
 const long  = `${now.getUTCDate()} ${MONTHS[now.getUTCMonth()]} ${now.getUTCFullYear()}`;
 html = html.replace(/(<b>Snapshot<\/b> · )\d{1,2} \w{3} \d{4}/, `$1${short}`);
+
+assertScriptParses(html);
 writeFileSync(HTML, html);
 
 // Update the README's provenance line so the stated date stays true.
