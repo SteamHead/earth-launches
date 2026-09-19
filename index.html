@@ -1045,7 +1045,7 @@ refreshBtn.addEventListener('click',manualRefresh);
    stores the message, the time, a salted daily hash of the IP, and the country.
    The raw IP is never stored. If FEEDBACK_ENDPOINT is left unset the button
    removes itself, so the page stays correct before the Worker is deployed. */
-const FEEDBACK_ENDPOINT = '';   // e.g. 'https://earth-launches-feedback.<subdomain>.workers.dev/feedback'
+const FEEDBACK_ENDPOINT = 'https://earth-launches-feedback.james-068.workers.dev/feedback';
 /* ---------- masthead menu ---------- */
 const menuBtn=$('#menuBtn'), menu=$('#menu');
 const closeMenu=()=>{ menu.hidden=true; menuBtn.setAttribute('aria-expanded','false'); };
