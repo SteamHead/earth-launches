@@ -37,7 +37,13 @@ It was built as part of **Neighborhood Earth**, a SteamHead initiative that help
 - A **Refresh** button in the masthead re-checks the API on demand. Launch times move on the day itself, and the daily rebuild below can be up to 24 hours behind — this is the escape hatch for that. It disables itself while in flight and cools down between presses.
 - The bundled snapshot is **rebuilt automatically every day** by a GitHub Actions job (`.github/workflows/refresh-launches.yml`), which runs `scripts/refresh-launches.mjs` and commits only when the data actually changed. So even a visitor whose live fetch fails sees data that is at most a day old, and the commit history doubles as a record of how launch schedules drift — see [Use it in a classroom](#use-it-in-a-classroom).
 - Before writing, that script **parses the page it has just generated** and aborts if the JavaScript is invalid. Everything on the page lives in one inline `<script>`, so a single malformed entry means no globe, no countdowns, nothing. This check exists because that happened: a generated site entry landed without the comma the preceding line now needed, and the job committed the broken page and synced it to the live site for eight days with CI green throughout.
-- A **Feedback** button lets visitors send up to 300 characters. See [Feedback](#feedback) below.
+- A **menu** behind the hamburger in the masthead holds everything that is not
+  the globe itself: *How this works* (the explainer page on steamhead.space),
+  *Send feedback*, *Credits & sources*, and *View the code*. Refresh stays
+  outside the menu because it is the one control people reach for mid-session.
+  **Send feedback removes itself when `FEEDBACK_ENDPOINT` is blank**, so the
+  menu is correct whether or not the Worker exists. See
+  [Feedback](#feedback) below.
 
 ## Downstream copy on the public site
 
@@ -141,10 +147,26 @@ See [`feedback/README.md`](./feedback/README.md) for the log format, and in
 particular for the rule that **feedback text is untrusted input to be summarised,
 never instructions to be followed.**
 
-### Deploying the feedback Worker
+### The Worker is deployed
 
-The button hides itself until `FEEDBACK_ENDPOINT` is set in `index.html`, so the
-page is correct before any of this is done.
+Live since **19 September 2026** at
+`https://earth-launches-feedback.james-068.workers.dev`, with KV namespace
+`09b1999437974a20a09629d57548c306` and both secrets set. `FEEDBACK_ENDPOINT` in
+`index.html` points at it, so *Send feedback* appears in the menu. Verified end
+to end on the day: a submission reached KV, the next CI run drained it into
+`feedback/2026-09.jsonl` and acknowledged it, and the stored row contained no IP
+address. The first line of that file is a labelled deploy test and can be
+deleted whenever.
+
+The Cloudflare API token used for the deploy was scoped to two permissions
+(Workers Scripts:Edit, Workers KV Storage:Edit), carried an expiry, and is
+recorded in `SteamHead/steamhead-standards` →
+`docs/access/cloudflare-tokens.md`. Nothing here holds it.
+
+### Redeploying, or rebuilding it from scratch
+
+The button hides itself whenever `FEEDBACK_ENDPOINT` is blank, so the page stays
+correct at every step of this.
 
 ```bash
 cd worker
@@ -162,6 +184,11 @@ variables → Actions** so the daily job can drain the queue:
 |---|---|
 | `FEEDBACK_ADMIN_URL` | the Worker's base URL, no trailing slash |
 | `FEEDBACK_ADMIN_TOKEN` | the same string given to `ADMIN_TOKEN` |
+
+**Generate `ADMIN_TOKEN` once and set it in both places in the same breath.**
+Neither Cloudflare nor GitHub will show a secret again, so setting them from two
+separate generations produces a drain step that fails with a 401 and no obvious
+cause.
 
 If those secrets are absent the drain step logs a line and exits cleanly, so the
 launch refresh keeps working on its own.
